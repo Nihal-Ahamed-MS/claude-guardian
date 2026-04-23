@@ -1,0 +1,24 @@
+# Rust
+/target/
+Cargo.lock
+
+# SQLite database
+*.db
+*.db-shm
+*.db-wal
+
+# Logs
+/tmp/llm-observer.log
+*.log
+
+# Node / UI
+ui/node_modules/
+ui/dist/
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.iml

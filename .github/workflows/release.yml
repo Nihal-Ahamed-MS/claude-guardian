@@ -55,11 +55,16 @@ jobs:
           cargo build --release --target ${{ matrix.target }}
           mv target/${{ matrix.target }}/release/claude-guardian ${{ matrix.artifact }}
 
+      - name: Generate checksum
+        run: shasum -a 256 ${{ matrix.artifact }} > ${{ matrix.artifact }}.sha256
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact }}
-          path: ${{ matrix.artifact }}
+          path: |
+            ${{ matrix.artifact }}
+            ${{ matrix.artifact }}.sha256
 
   release:
     needs: build
@@ -75,3 +80,36 @@ jobs:
         with:
           files: artifacts/*
           generate_release_notes: true
+
+  update-formula:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download checksums
+        run: |
+          VERSION=${GITHUB_REF_NAME}
+          BASE="https://github.com/Nihal-Ahamed-MS/claude-guardian/releases/download/${VERSION}"
+          ARM_SHA=$(curl -sL "${BASE}/claude-guardian-aarch64-apple-darwin.sha256" | awk '{print $1}')
+          X86_SHA=$(curl -sL "${BASE}/claude-guardian-x86_64-apple-darwin.sha256" | awk '{print $1}')
+          echo "ARM_SHA=${ARM_SHA}" >> $GITHUB_ENV
+          echo "X86_SHA=${X86_SHA}" >> $GITHUB_ENV
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+
+      - name: Update Homebrew formula
+        run: |
+          sed -i \
+            -e "s|version \".*\"|version \"${VERSION#v}\"|" \
+            -e "s|sha256 \"ARM_PLACEHOLDER\"|sha256 \"${ARM_SHA}\"|" \
+            -e "s|sha256 \"X86_PLACEHOLDER\"|sha256 \"${X86_SHA}\"|" \
+            -e "s|/download/v[^/]*/|/download/${VERSION}/|g" \
+            Formula/claude-guardian.rb
+
+      - name: Commit updated formula
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Formula/claude-guardian.rb
+          git commit -m "chore: update formula to ${VERSION}"
+          git push origin HEAD:main

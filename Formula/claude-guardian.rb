@@ -1,4 +1,4 @@
-class ClaudeGuardian < Formula
+class ClaudeGuardian < formula
   desc "Local observer daemon that intercepts Claude Code hooks and masks PII"
   homepage "https://github.com/Nihal-Ahamed-MS/claude-guardian"
   version "0.1.2"

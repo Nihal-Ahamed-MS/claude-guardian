@@ -104,13 +104,13 @@ jobs:
             -e "s|sha256 \"ARM_PLACEHOLDER\"|sha256 \"${ARM_SHA}\"|" \
             -e "s|sha256 \"X86_PLACEHOLDER\"|sha256 \"${X86_SHA}\"|" \
             -e "s|/download/v[^/]*/|/download/${VERSION}/|g" \
-            Formula/claude-guardian.rb
+            formula/claude-guardian.rb
 
       - name: Commit updated formula
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add Formula/claude-guardian.rb
+          git add formula/claude-guardian.rb
           git commit -m "chore: update formula to ${VERSION}"
           git pull --rebase origin main
           git push origin HEAD:main

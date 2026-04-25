@@ -17,6 +17,9 @@ brew tap Nihal-Ahamed-MS/claude-guardian https://github.com/Nihal-Ahamed-MS/clau
 brew install claude-guardian
 ```
 
+### MVP
+![MVP](https://github.com/Nihal-Ahamed-MS/claude-guardian/blob/main/assets/poc.gif?raw=true)
+
 ### Manual
 
 Download the binary for your platform from [Releases](https://github.com/Nihal-Ahamed-MS/claude-guardian/releases), then:
@@ -53,4 +56,5 @@ claude-guardian logs    # open monitoring UI at http://localhost:7422
 | 7422 | Web monitoring UI |
 
 ## License
+
 MIT
